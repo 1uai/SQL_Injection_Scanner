@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Viewport" content="width=device-width, intial-scale=1.0">
+    <title>SQL INJECTION SCANNER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+        
+        <h1>SQL INJECTION SCANNER</h1>
+        
+        <!-- First: URL Block -->
+        <div id="url_section">
+            <h2>Enter the URL</h2>
+            <input type="url" id="url_input" placeholder="Enter website URL" required>
+            <button id="url_submit">Submit URL</button>
+        </div>
+
+        <!-- Second: Select Form -->
+        <div id="form_section" style="display: none;">
+            <h2>Select Form</h2>
+            <div id="form_list"></div>
+        </div>
+
+        <!-- Third: Select Parameters-->
+        <div id="parameter_section" style="display: none;">
+            <h2>Choose Input Parameters for SQL Injection</h2>
+            <div id="parameter_list"></div>
+            <button id="parameter_submit">Submit Parameters </button>
+        </div>
+
+        <!-- Fourth: Attack Type -->
+        <div id="attack_section" style="display: none;">
+            <h2>Select the Attack Type</h2>
+            <select id="attack_type" name="attack-type">
+                <option value="In-band">In-band</option>
+                <option value="Error-based">Error-based</option>
+                <option value="Union-based">Union-Based</option>
+                <option value="Auth-Bypass-Payloads">Auth-Bypass</option>
+                <option value="Time-based-blind">Time-Based Blind</option>
+            </select>
+            <button id="attack_submit">Perform Attack</button>
+        </div>
+
+        <!-- Fifth: Results -->
+        <div id="result_section" style="display: none;">
+            <h2>Attack Results</h2>
+            <div id="attack_results"></div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+        
+                // Step 1: Handle URL submission
+                $('#url_submit').click(function() {
+                    let url = $('#url_input').val();
+                    $.post('/', { url: url, step: 'url' }, function(data) {
+                        if (data.forms) {
+                            let formOptions = '';
+                            $.each(data.forms, function(index, form) {
+                                formOptions += `<input type="radio" name="form_choice" value="${form.form_id}"> ${form.form_id}: ${JSON.stringify(form.form_data)}<br>`;
+                            });
+                            $('#form_list').html(formOptions);
+                            $('#form_section').show();
+                        } else {
+                            alert("No forms found or invalid URL.");
+                        }
+                    }, 'json').fail(function() {
+                        alert("Error: Could not extract forms from the URL.");
+                    });
+                });
+
+                // Step 2: Handle form selection
+                $('body').on('change', 'input[name="form_choice"]', function() {
+                    let formChoice = $('input[name="form_choice"]:checked').val();
+                    console.log("Selected form choice:", formChoice);  // Debugging log<!---->
+                    $.post('/', { form_choice: formChoice, step: 'select_form' }, function(data) {
+                        if (data.input_names) {
+                            let parameterOptions = '';
+                            $.each(data.input_names, function(index, name) {
+                                parameterOptions += `<input type="checkbox" name="params" value="${name}"> ${name}<br>`;
+                            });
+                            $('#parameter_list').html(parameterOptions);
+                            $('#parameter_section').show();
+                        } else {
+                            alert("No input fields found or invalid form selection.");
+                        }
+                    }, 'json').fail(function() {
+                        alert("Error: Could not retrieve form inputs from server.");
+                    });
+                });
+
+                // Step 3: Handle parameter selection
+                $('#parameter_submit').click(function() {
+                    let selectedParams = [];
+                    $('input[name="params"]:checked').each(function() {
+                        selectedParams.push($(this).val());
+                    });
+                    
+                    console.log("Selected parameters before sending:", selectedParams);  // Debugging log
+
+                    $.ajax({
+                        url: '/',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ params: selectedParams, step: 'select_parameters' }),
+                        success: function(data) {
+                            console.log("Response data:", data);  // Debugging log
+                            if (data.message) {
+                                $('#attack_section').show();
+                            } else {
+                                alert(data.error);
+                            }
+                        },
+                        error: function() {
+                            alert("Error: Could not submit selected parameters.");
+                        }
+                    });
+                });
+
+
+                // Step 4: Handle attack execution
+                $('#attack_submit').click(function() {
+                    let attackType = $('#attack_type').val();
+                    let url = $('#url_input').val(); 
+                    $.post('/', { attack_type: attackType, step: 'perform_attack',url:url }, function(data) {
+                        
+                        let resultContent = '';
+                        if (data.result) {
+                            $.each(data.result, function(index, result) {
+                                resultContent += `<p>${result}</p>`;
+                            });
+                            $('#attack_results').html(resultContent);
+                            $('#result_section').show();
+                        } else {
+                            alert("No result data returned.");
+                        }
+                    }, 'json').fail(function() {
+                        alert("Error: Attack could not be performed.");
+                    });
+                });
+            });
+        </script>
+</body>
+</html>
