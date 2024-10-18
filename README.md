@@ -1,22 +1,25 @@
-#SQL Injection Scanner
-<pre>
-This project is a SQL Injection Scanner built with Flask to help detect vulnerabilities in web forms by simulating different types of SQL injection attacks. It extracts forms from a target website, allows users to select form fields, and tests them using various SQL injection payloads.
-Features
 
-    Extracts and displays input forms from a given URL.
-    Provides options to choose specific form fields for SQL injection testing.
-    Supports multiple SQL injection types including:
-        In-band SQL Injection
-        Union-based SQL Injection
-        Error-based SQL Injection
-        Time-based Blind SQL Injection
-        Authentication Bypass Payloads
-    Sends injected forms with payloads and analyzes the response for SQL injection vulnerabilities.
+---
 
-Project Structure
+# SQL Injection Scanner
 
-python Flask_app.py
+This project is a **SQL Injection Scanner** built with **Flask** to help detect vulnerabilities in web forms by simulating different types of SQL injection attacks. It extracts forms from a target website, allows users to select form fields, and tests them using various SQL injection payloads.
 
+## Features
+
+- Extracts and displays input forms from a given URL.
+- Provides options to choose specific form fields for SQL injection testing.
+- Supports multiple SQL injection types including:
+  - **In-band SQL Injection**
+  - **Union-based SQL Injection**
+  - **Error-based SQL Injection**
+  - **Time-based Blind SQL Injection**
+  - **Authentication Bypass Payloads**
+- Sends injected forms with payloads and analyzes the response for SQL injection vulnerabilities.
+
+## Project Structure
+
+```
 /SQL_Injection_Scanner
 │
 ├── /static
@@ -28,50 +31,65 @@ python Flask_app.py
 ├── Flask_app.py               # Main Flask application for running the scanner.
 ├── Payloads_Of_SQL.py         # Contains all the SQL injection payloads used in the scanner.
 ├── Forms_Extraction.py        # Extracts input forms from the target website using Selenium.
+```
 
-Installation
+## Installation
 
-    Clone this repository:
+1. Clone this repository:
 
-    bash
+   ```bash
+   git clone https://github.com/1uai/SQL_Injection_Scanner.git
+   ```
 
-git clone https://github.com/YourUsername/SQL_Injection_Scanner.git
+2. Navigate to the project directory:
 
-Navigate to the project directory:
+   ```bash
+   cd SQL_Injection_Scanner
+   ```
 
-bash
+3. Install required dependencies:
 
-cd SQL_Injection_Scanner
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Install required dependencies:
+4. Make sure to have a Selenium WebDriver (e.g., `chromedriver` or `geckodriver`) installed and configured for extracting forms.
 
-bash
+## Usage
 
-    pip install -r requirements.txt
+1. Start the Flask server:
 
-    Make sure to have a Selenium WebDriver (e.g., chromedriver or geckodriver) installed and configured for extracting forms.
+   ```bash
+   python Flask_app.py
+   ```
 
-Usage
+2. Open your web browser and go to `http://localhost:5000`.
 
-    Start the Flask server:
+3. Enter the URL of the target website. The app will display the forms found on the page.
 
-    bash
+4. Select a form, choose input parameters to inject, and choose the type of SQL injection attack.
 
-    python Flask_app.py
+5. The app will perform the attack and display the results of the scan.
 
-    Open your web browser and go to http://localhost:5000.
+## SQL Injection Types
 
-    Enter the URL of the target website. The app will display the forms found on the page.
+- **In-band SQL Injection**: Directly executes queries and retrieves data in the same communication channel.
+- **Union-based SQL Injection**: Uses the `UNION` operator to extract information.
+- **Error-based SQL Injection**: Forces the database to display errors that reveal vulnerabilities.
+- **Time-based Blind SQL Injection**: Exploits a time delay to infer vulnerabilities when no visible output is returned.
+- **Authentication Bypass Payloads**: Attempts to bypass login forms using SQL injection.
 
-    Select a form, choose input parameters to inject, and choose the type of SQL injection attack.
+## Requirements
 
-    The app will perform the attack and display the results of the scan.
+- Python 3.x
+- Flask
+- BeautifulSoup
+- Selenium
+- Requests
 
-SQL Injection Types
+## Contribution
 
-    In-band SQL Injection: Directly executes queries and retrieves data in the same communication channel.
-    Union-based SQL Injection: Uses the UNION operator to extract information.
-    Error-based SQL Injection: Forces the database to display errors that reveal vulnerabilities.
-    Time-based Blind SQL Injection: Exploits a time delay to infer vulnerabilities when no visible output is returned.
-    Authentication Bypass Payloads: Attempts to bypass login forms using SQL injection.
-</pre>
+Feel free to fork this repository, submit issues, and make pull requests. Contributions are welcome!
+
+
+---
